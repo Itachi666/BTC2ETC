@@ -6,19 +6,39 @@ import CURL
 
 from testdata import *
 
+# {
+#   "private": "0b481a44ff33a78ff446b647cf30d3b7a69b8cfdf8bfcec5d54fcecbe5ed5808",
+#   "public": "0478e977bff6a819b79e3c1fc59ffec45cb80e6fc970d63afb0341b22d85e9ead034dd2ba39df0808ec1e02c0358daf8f99be33882b49ebf3c082796ea7b1bc0a8",
+#   "address": "ad924bce5b3550190ce983bc671219b3d53955c4"
+# }
+
+
 Token = '5003504c53a84e5290778d69f1930a10'
 
-def getbalance(address):
-    c = CURL.initCurl()
-    html = CURL.GetData(c, 'https://api.blockcypher.com/v1/beth/test/addrs/%s/balance' % address)
-    print html
 
+class ETH_wallet():
+    def __init__(self):
+        self.address = {}
 
-def showmethemoney(address):
-    c = CURL.initCurl()
-    data = '{"address": "%s", "amount": 1000000000000000000}' % address
-    html = CURL.PostData(c, 'https://api.blockcypher.com/v1/beth/test/faucet?token=%s' % Token, data)
-    return html
+    def setaddress(self):
+        self.address = json.loads(get_address())
+
+    def haveaddress(self, private, public, address):
+        self.address["private"] = private
+        self.address["public"] = public
+        self.address["address"] = address
+
+    def getbalance(self):
+        c = CURL.initCurl()
+        html = CURL.GetData(c, 'https://api.blockcypher.com/v1/beth/test/addrs/%s/balance' % self.address["address"])
+        data = json.loads(html)
+        return data["final_balance"]
+
+    def showmethemoney(self):
+        c = CURL.initCurl()
+        data = '{"address": "%s", "amount": 1000000000000000000}' % self.address["address"]
+        html = CURL.PostData(c, 'https://api.blockcypher.com/v1/beth/test/faucet?token=%s' % Token, data)
+        return html
 
 
 def get_address():
@@ -62,4 +82,4 @@ def tx(myaddress, output, value):
     send_tx(data)
 
 # tx(inputaddress, outputaddress["address"], 1)
-getbalance(inputaddress["address"])
+# getbalance(inputaddress["address"])

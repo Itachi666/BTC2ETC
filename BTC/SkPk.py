@@ -165,8 +165,3 @@ def getall(i, j, inverse3, path):
     return i, j, n, h, salt, sk, Wifsk, pk, com_pk, final_pk
 
 
-if __name__ == '__main__':
-    k=1
-    #main()
-    # checking('cV2tkAFehDQjHXbnJZCpVPeqtB3v7RwGVUPSCVeTwvbCS9hwvm3W')
-    
