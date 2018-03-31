@@ -32,13 +32,19 @@ class ETH_wallet():
         c = CURL.initCurl()
         html = CURL.GetData(c, 'https://api.blockcypher.com/v1/beth/test/addrs/%s/balance' % self.address["address"])
         data = json.loads(html)
-        return data["final_balance"]
+        return data
 
     def showmethemoney(self):
         c = CURL.initCurl()
-        data = '{"address": "%s", "amount": 1000000000000000000}' % self.address["address"]
+        data = '{"address": "%s", "amount": 100000000000000000000}' % self.address["address"]
         html = CURL.PostData(c, 'https://api.blockcypher.com/v1/beth/test/faucet?token=%s' % Token, data)
         return html
+
+    def make_tx_and_sign(self, output, value):
+        unsigned_tx = create_tx(self.address["address"], output, value)
+        unsigned_tx["signatures"] = make_tx_signatures(txs_to_sign=unsigned_tx['tosign'], privkey=self.address["private"])
+        data = json.dumps(unsigned_tx)
+        return data
 
 
 def get_address():
@@ -48,11 +54,18 @@ def get_address():
     return html
 
 
+def getbalance(address):
+    c = CURL.initCurl()
+    html = CURL.GetData(c, 'https://api.blockcypher.com/v1/beth/test/addrs/%s/balance' % address)
+    data = json.loads(html)
+    return data
+
+
 def send_tx(data):
     c = CURL.initCurl()
     url = 'https://api.blockcypher.com/v1/beth/test/txs/send?token=%s' % Token
     html = CURL.PostData(c, url, data)
-    print html
+    return html
 
 
 def make_tx_signatures(txs_to_sign, privkey):
@@ -74,12 +87,8 @@ def create_tx(input, output, value):
     return json.loads(html)
 
 
-def tx(myaddress, output, value):
+def make_tx_and_send(myaddress, output, value):
     unsigned_tx = create_tx(myaddress["address"], output, value)
     unsigned_tx["signatures"] = make_tx_signatures(txs_to_sign=unsigned_tx['tosign'], privkey=myaddress["private"])
-
     data = json.dumps(unsigned_tx)
     send_tx(data)
-
-# tx(inputaddress, outputaddress["address"], 1)
-# getbalance(inputaddress["address"])

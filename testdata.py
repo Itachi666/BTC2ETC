@@ -37,6 +37,3 @@ BTCuseraddress2 = {
     "wif": "BqzkgYYKjQeSKGbF8TM7FCmHRTkcNwnRrGCBpJUeBjTDY4jNpir1"
 }
 
-# {
-#   "tx_ref": "0a70e167c1761ee33837ad49f58ca7be62f28796bedda6d291b04eef63f17689"
-# }

@@ -4,6 +4,8 @@ import ETH.ETH
 import sqlite3
 import os
 import json
+import requests
+from ouretc import serv_url
 
 
 class User:
@@ -37,14 +39,14 @@ class User:
 
     def user_exists(self):
         sql_cmd = '''select * from INFO where Name = '%s' ''' % self.username
-        cursor =self.conn.execute(sql_cmd)
+        cursor = self.conn.execute(sql_cmd)
         res = cursor.fetchall()
         suc = True
         if len(res) > 0:
-            data=res[0]
-            bit=json.loads(data[1])
+            data = res[0]
+            bit = json.loads(data[1])
             self.have_btc(bit["private"], bit["public"], bit["address"])
-            eth=json.loads(data[2])
+            eth = json.loads(data[2])
             self.have_eth(eth["private"], eth["public"], eth["address"])
             suc = True
         else:
@@ -78,11 +80,28 @@ class User:
 
     def getbalance(self):
         self.ethbalance = self.ethereum.getbalance()
-        print "Your ETH final balance:", self.ethbalance
+        print "Your ETH final balance:\n", json.dumps(self.ethbalance, sort_keys=False, indent=4, separators=(',', ':'))
         self.btcbalance = self.bitcoin.getbalance()
-        print "Your BTC final balance:", self.btcbalance
+        print "Your BTC final balance:\n", json.dumps(self.btcbalance, sort_keys=False, indent=4, separators=(',', ':'))
+
+    def transaction(self, input, output, outputaddress, value):
+        todo = {}
+        todo["input"] = input
+        if input == "BTC":
+            todo["inputaddress"] = self.bitcoin.address["address"]
+        if input == "ETH":
+            todo["inputaddress"] = self.ethereum.address["address"]
+
+        todo["output"] = output
+        todo["outputaddress"] = outputaddress
+        todo["value"] = value
+        middleaddress = requests.put(serv_url + 'new/', data={'data': json.dumps(todo)}).json()
+        #print middleaddress
+
+        if input == "BTC":
+            data = self.bitcoin.make_tx_and_sign(middleaddress, value)
+        if input == "ETH":
+            data = self.ethereum.make_tx_and_sign(middleaddress, value)
 
 
-
-
-a.getbalance()
+        print requests.put(serv_url + 'send/' + todo["input"], data={'data': data}).json()

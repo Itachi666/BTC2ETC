@@ -5,7 +5,6 @@ import sqlite3
 import os
 import json
 
-
 class SuperUser:
     def __init__(self, name):
         self.username = name
@@ -13,6 +12,8 @@ class SuperUser:
         self.ethereum = ETH.ETH.ETH_wallet()
         self.initDB()
         self.user_exists()
+        self.ethtx=''
+        self.btctx=''
 
     def initDB(self):
         if os.path.exists('ServerData.db'):
@@ -78,9 +79,12 @@ class SuperUser:
 
     def getbalance(self):
         self.ethbalance = self.ethereum.getbalance()
-        print "Your ETH final balance:", self.ethbalance
+        print "Your ETH final balance:\n", json.dumps(self.ethbalance,sort_keys=False, indent=4, separators=(',', ':'))
         self.btcbalance = self.bitcoin.getbalance()
-        print "Your BTC final balance:", self.btcbalance
+        print "Your BTC final balance:\n", json.dumps(self.btcbalance,sort_keys=False, indent=4, separators=(',', ':'))
+
+
+
 
 
 
