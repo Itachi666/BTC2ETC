@@ -33,11 +33,13 @@ class send(Resource):
         BigBoss = json.loads(data)
         if option == 'ETH':
             html = ETH.ETH.send_tx(data)
-            print BTC.BTC.send_tx(Adm.btctx)
+            BTC.BTC.send_tx(Adm.btctx)
+            Adm.btctx=''
             return html
         if option == 'BTC':
             html = BTC.BTC.send_tx(data)
             ETH.ETH.send_tx(Adm.ethtx)
+            Adm.ethtx=''
             return html
 
 

@@ -83,6 +83,7 @@ class User:
         print "Your ETH final balance:\n", json.dumps(self.ethbalance, sort_keys=False, indent=4, separators=(',', ':'))
         self.btcbalance = self.bitcoin.getbalance()
         print "Your BTC final balance:\n", json.dumps(self.btcbalance, sort_keys=False, indent=4, separators=(',', ':'))
+        return self.ethbalance,self.btcbalance
 
     def transaction(self, input, output, outputaddress, value):
         todo = {}
